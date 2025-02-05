@@ -37,9 +37,11 @@ public class Main {
             System.out.println("До свидания!");
             System.exit(1);
         } else {
+            File file = new File(choose);
+            if (file.exists()) {
                 ObjectInputStream ini = new ObjectInputStream(new FileInputStream(choose + "\\your_uuid.txt"));
                 Set<String> aNewSet = (HashSet<String>) ini.readObject(); // to do обернуть считывание с файла в try-catch
-                if (aNewSet.contains(choose)) {
+                if (aNewSet.contains(choose)) { // оставлю дополнительную проверку
                     System.out.println(aNewSet.contains(choose));
                     menu1();
                 } else {
@@ -56,7 +58,11 @@ public class Main {
                             System.out.println("До новых встреч!");
                             System.exit(1);
                             break;
+                    }
                 }
+            } else {
+                System.out.println("Такого имени не существует ");
+                menu();
             }
         }
     }
@@ -79,7 +85,7 @@ public class Main {
             urls.put(shortlink1, link);
             System.out.println("Ваша короткая ссылка: " + shortlink1);
         }
-        File urls_file = new File("urls_file.txt");
+        File urls_file = new File( choose + "\\urls_file.txt");
         ObjectOutputStream urls_output = new ObjectOutputStream(new FileOutputStream(urls_file));
         urls_output.writeObject(urls); // записываем в файл
         urls_output.close();
