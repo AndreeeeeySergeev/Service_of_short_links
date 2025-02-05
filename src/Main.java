@@ -2,6 +2,7 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.*;
 
 
@@ -23,7 +24,9 @@ public class Main {
         if (choose.contains("нет")) {
             UUID uuid = UUID.randomUUID();
             set.add(String.valueOf(uuid));
-            File your_uuid = new File("your_uuid.txt");
+            File file = new File(String.valueOf(uuid));
+            file.mkdir();
+            File your_uuid = new File(file,"your_uuid.txt");
             ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(your_uuid));
             output.writeObject(set); // to do перекодировать файл в utf-8
             output.close();
@@ -34,26 +37,25 @@ public class Main {
             System.out.println("До свидания!");
             System.exit(1);
         } else {
-            ObjectInputStream ini = new ObjectInputStream(new FileInputStream("your_uuid.txt"));
-            Set<String> aNewSet = (HashSet<String>) ini.readObject(); // to do обернуть считывание с файла в try-catch
-
-            if (aNewSet.contains(choose)) {
-                System.out.println(aNewSet.contains(choose));
-                menu1();
-            } else {
-                System.out.print("Неверный uuid!\n" +
+                ObjectInputStream ini = new ObjectInputStream(new FileInputStream(choose + "\\your_uuid.txt"));
+                Set<String> aNewSet = (HashSet<String>) ini.readObject(); // to do обернуть считывание с файла в try-catch
+                if (aNewSet.contains(choose)) {
+                    System.out.println(aNewSet.contains(choose));
+                    menu1();
+                } else {
+                    System.out.print("Неверный uuid!\n" +
                         "1.Ввеcти заново uuid\n" +
                         "2.Выйти\n");
-                String variant = input.nextLine();
+                    String variant = input.nextLine();
 
-                switch (variant) {
-                    case "1":
-                        menu();
-                        break;
-                    case "2":
-                        System.out.println("До новых встреч!");
-                        System.exit(1);
-                        break;
+                    switch (variant) {
+                        case "1":
+                            menu();
+                            break;
+                        case "2":
+                            System.out.println("До новых встреч!");
+                            System.exit(1);
+                            break;
                 }
             }
         }
@@ -114,15 +116,18 @@ public class Main {
             Scanner onesmore = new Scanner(System.in);
             System.out.print("Введите количество использования ссылки: ");
             int good = Integer.valueOf(onesmore.nextLine());
-            File file = new File("links.txt");
+            try { File file = new File("links.txt");
             file.exists(); // проверяем существование файла
 //            BufferedReader read = new BufferedReader(file, good); // BufferedInputSTREAM
             InputStreamReader reading = new InputStreamReader(new FileInputStream(file));
             reading.read();
             Integer c = Integer.valueOf(reading.read());
             if ( c > good) {
-                file.delete(); // если превышает количество обращений к файлу ссылки, то файл удаляется
-        }
+                file.delete();// если превышает количество обращений к файлу ссылки, то файл удаляется
+            }
+            } catch (FileNotFoundException e) {
+                System.out.println("Внимание " + e.getMessage());
+            }
     }
 
 
