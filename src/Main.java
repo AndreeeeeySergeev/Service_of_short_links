@@ -1,4 +1,7 @@
+import java.awt.*;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 
@@ -6,11 +9,11 @@ public class Main {
     static HashMap<String, String> urls = new HashMap<>();
     static Scanner input = new Scanner(System.in);
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
         menu();
     }
 
-    public static void menu() throws IOException, ClassNotFoundException {
+    public static void menu() throws IOException, ClassNotFoundException, URISyntaxException {
 
         Set<String> set = new HashSet<>();
 
@@ -57,15 +60,16 @@ public class Main {
     }
 
 
-    public static void createShortLink() throws FileNotFoundException, IOException {
+    public static void createShortLink() throws FileNotFoundException, IOException, URISyntaxException {
         Calendar calendar = Calendar.getInstance();
         Scanner input = new Scanner(System.in);
+
 
         System.out.print("Введите вашу ccылку: ");
         String link = input.nextLine();
         String shortlink = link + UUID.randomUUID().toString().substring(0, 8);// создаем ссылку
 
-        if (urls.get(shortlink).isEmpty()) { //проверяем наличие ссылки
+        if (!urls.containsKey(shortlink)) { //проверяем наличие ссылки
             urls.put(shortlink, link);
             System.out.println("Ваша короткая ссылка: " + shortlink);
         } else {
@@ -78,23 +82,28 @@ public class Main {
         urls_output.writeObject(urls); // записываем в файл
         urls_output.close();
 
-        int day = calendar.get(Calendar.DAY_OF_MONTH); // создаем существование ссылки по дате
-        System.out.print("Введите количество дней существования ссылки: ");
+        int day = calendar.get(Calendar.DAY_OF_MONTH);// устанавливаем дату создания короткой ссылки
+        System.out.print("Введите количество дней существования ссылки: ");// чтобы установить время ее жизни
         int c = input.nextInt();
-        if (c > day) {
+        if (calendar.after(c)) {
             InputStreamReader reading = new InputStreamReader(new FileInputStream("urls_file.txt"));
             urls.remove(shortlink);
             System.out.println("Превышено количество дней существования ссылки");
             menu1();
         }
     }
-    public static void getShortlink() throws IOException {
+    public static void getShortlink() throws IOException, URISyntaxException {
+        /*
+        5. Переход по короткой ссылке.
+        При вводе короткой ссылки в консоль пользователь должен автоматически перенаправляться на
+        исходный ресурс в браузере:
+         */
         try {
             FileReader in_urls = new FileReader("urls_file.txt");
             in_urls.read();
             System.out.print("Введите вашу короткую ссылку: ");
             String a = input.nextLine();
-            System.out.println("Ваша полноценная ссылка: " + urls.get(a));
+            Desktop.getDesktop().browse(new URI(urls.get(a)));
         } catch (FileNotFoundException e) {
             System.out.println("Ссылки не существует " + e.getMessage());
             menu1();
@@ -117,7 +126,7 @@ public class Main {
     }
 
 
-    public static void menu1() throws IOException {
+    public static void menu1() throws IOException, URISyntaxException {
         Scanner input = new Scanner(System.in);
         boolean work = true;
         while (work) {
