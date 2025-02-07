@@ -2,21 +2,21 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.*;
+import java.util.List;
 
 
 public class Main {
     static HashMap<String, String> urls = new HashMap<>();
     static Scanner input = new Scanner(System.in);
+    static Set <String> set = new HashSet<>();
+//    static String choose = input.nextLine();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
         menu();
     }
 
     public static void menu() throws IOException, ClassNotFoundException, URISyntaxException {
-
-        Set<String> set = new HashSet<>();
 
         System.out.print("Здравствуйте! Введите ваш UUID или напишите 'нет' или 'выход', для выхода: ");
         String choose = input.nextLine();
@@ -58,6 +58,8 @@ public class Main {
                             System.out.println("До новых встреч!");
                             System.exit(1);
                             break;
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + variant);
                     }
                 }
             } else {
@@ -68,10 +70,8 @@ public class Main {
     }
 
 
-    public static void createShortLink() throws FileNotFoundException, IOException, URISyntaxException {
+    public static void createShortLink() throws FileNotFoundException, IOException, URISyntaxException, ClassNotFoundException {
         Calendar calendar = Calendar.getInstance();
-        Scanner input = new Scanner(System.in);
-
 
         System.out.print("Введите вашу ccылку: ");
         String link = input.nextLine();
@@ -85,7 +85,8 @@ public class Main {
             urls.put(shortlink1, link);
             System.out.println("Ваша короткая ссылка: " + shortlink1);
         }
-        File urls_file = new File( choose + "\\urls_file.txt");
+        String a = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
+        File urls_file = new File(a, "urls_file.txt");
         ObjectOutputStream urls_output = new ObjectOutputStream(new FileOutputStream(urls_file));
         urls_output.writeObject(urls); // записываем в файл
         urls_output.close();
@@ -94,13 +95,13 @@ public class Main {
         System.out.print("Введите количество дней существования ссылки: ");// чтобы установить время ее жизни
         int c = input.nextInt();
         if (calendar.after(c)) {
-            InputStreamReader reading = new InputStreamReader(new FileInputStream("urls_file.txt"));
+            InputStreamReader reading = new InputStreamReader(new FileInputStream(urls_file));
             urls.remove(shortlink);
             System.out.println("Превышено количество дней существования ссылки");
             menu1();
         }
     }
-    public static void getShortlink() throws IOException, URISyntaxException {
+    public static void getShortlink() throws IOException, URISyntaxException, ClassNotFoundException {
         /*
         5. Переход по короткой ссылке.
         При вводе короткой ссылки в консоль пользователь должен автоматически перенаправляться на
@@ -137,8 +138,7 @@ public class Main {
     }
 
 
-    public static void menu1() throws IOException, URISyntaxException {
-        Scanner input = new Scanner(System.in);
+    public static void menu1() throws IOException, URISyntaxException, ClassNotFoundException {
         boolean work = true;
         while (work) {
             System.out.print("Выберите нужный вам пункт меню:\n " +
@@ -146,9 +146,9 @@ public class Main {
                     "2. Получить ссылку для перехода\n " +
                     "3. Количество раз для перехода\n " +
                     "4. Выйти\n");
-            String choose = input.nextLine();
+            String variant = input.nextLine();
 
-            switch (choose) {
+            switch (variant) {
                 case "1":
                     createShortLink();
                     break;
@@ -164,7 +164,7 @@ public class Main {
                     work = false;
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected value: " + choose);
+                    throw new IllegalStateException("Unexpected value: " + variant);
             }
         }
     }
