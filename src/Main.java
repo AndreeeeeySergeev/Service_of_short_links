@@ -88,10 +88,28 @@ public class Main {
         }
         String a = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
         File urls_file = new File(a, "urls_file.txt");
-        ObjectOutputStream urls_output = new ObjectOutputStream(new FileOutputStream(urls_file));
-        urls_output.writeObject(urls); // записываем в файл
-        urls_output.close();
-        menu1();
+//        ObjectOutputStream urls_output = new ObjectOutputStream(new FileOutputStream(urls_file));
+//        urls_output.writeObject(urls); // записываем в файл
+//        urls_output.close();
+        BufferedWriter buffer_write = null;
+        try {
+            buffer_write = new BufferedWriter(new FileWriter(urls_file));
+            for (Map.Entry<String, String> entry : urls.entrySet()) {
+                buffer_write.write(entry.getKey() + "=" + entry.getValue());
+                buffer_write.newLine();
+            }
+            buffer_write.flush();
+
+        } catch (IOException e) {
+            e.getMessage();
+        } finally {
+
+            try {
+                buffer_write.close();
+            }
+            catch (Exception e) {
+            }
+            menu1();
 
 
 //        int day = calendar.get(Calendar.DAY_OF_MONTH);// устанавливаем дату создания короткой ссылки
@@ -103,6 +121,7 @@ public class Main {
 //            System.out.println("Превышено количество дней существования ссылки");
 //            menu1();
 //    }
+        }
     }
 
 
@@ -114,22 +133,35 @@ public class Main {
         При вводе короткой ссылки в консоль пользователь должен автоматически перенаправляться на
         исходный ресурс в браузере:
          */
+        System.out.print("Введите вашу короткую ссылку: ");
+        String b = input.nextLine();
+        HashMap <String, String> aNewHashMap = new HashMap<>();
         String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
         try {
             BufferedReader in_urls = new BufferedReader(new FileReader(name + "\\urls_file.txt"));
+            String line;
+            line =in_urls.readLine();
 
-            HashMap a = new HashMap<>(in_urls.read());
-            System.out.print("Введите вашу короткую ссылку: ");
-            String b = input.nextLine();
-            if (a.containsKey(b)) {
-                Desktop.getDesktop().browse(new URI(a.get(b).toString()));
-            } else {
-                System.out.println("Ничего нет");
+            while (line != null) {
+                String parts = line.split("=").toString();
+                if (parts.length() == 2) {
+                    String key = parts;
+                    String value = parts;
+                    aNewHashMap.put(key, value);
                 }
+            }
+//            File file = new File(name +"\\urls_file.txt");
+//            FileInputStream f = new FileInputStream(file);
+//            ObjectInputStream s = new ObjectInputStream(f);
+//            HashMap<String, Object> fileObj2 = (HashMap<String, Object>) s.readObject();
+//            s.close();
+            Desktop.getDesktop().browse(new URI(aNewHashMap.get(b)));
+
         } catch (FileNotFoundException e) {
             System.out.println("Ссылки не существует " + e.getMessage());
             menu1();
         }
+
     }
 
         public static void clicking() throws IOException {
