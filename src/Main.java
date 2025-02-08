@@ -106,8 +106,7 @@ public class Main {
 
             try {
                 buffer_write.close();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
             }
             menu1();
 
@@ -125,8 +124,6 @@ public class Main {
     }
 
 
-
-
     public static void getShortlink() throws IOException, URISyntaxException, ClassNotFoundException {
         /*
         5. Переход по короткой ссылке.
@@ -135,32 +132,34 @@ public class Main {
          */
         System.out.print("Введите вашу короткую ссылку: ");
         String b = input.nextLine();
-        HashMap <String, String> aNewHashMap = new HashMap<>();
+        HashMap<String, String> aNewHashMap = new HashMap<>();
         String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
         try {
             BufferedReader in_urls = new BufferedReader(new FileReader(name + "\\urls_file.txt"));
             String line;
-            line =in_urls.readLine();
+            line = in_urls.readLine();
 
             while (line != null) {
-                String parts = line.split("=").toString();
-                if (parts.length() == 2) {
-                    String key = parts;
-                    String value = parts;
+                String[] parts = line.split("=");
+                String key = parts[0].trim();
+                String value = parts[1].trim();
+
+                if (!key.equals("") && !value.equals(""))
                     aNewHashMap.put(key, value);
-                }
             }
+            in_urls.close();
 //            File file = new File(name +"\\urls_file.txt");
 //            FileInputStream f = new FileInputStream(file);
 //            ObjectInputStream s = new ObjectInputStream(f);
 //            HashMap<String, Object> fileObj2 = (HashMap<String, Object>) s.readObject();
 //            s.close();
-            Desktop.getDesktop().browse(new URI(aNewHashMap.get(b)));
+        Desktop.getDesktop().browse(new URI(aNewHashMap.get(b)));
 
-        } catch (FileNotFoundException e) {
-            System.out.println("Ссылки не существует " + e.getMessage());
-            menu1();
-        }
+    } catch(
+    FileNotFoundException e){
+        System.out.println("Ссылки не существует " + e.getMessage());
+        menu1();
+    }
 
     }
 
