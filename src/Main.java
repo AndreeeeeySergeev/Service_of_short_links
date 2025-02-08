@@ -9,7 +9,7 @@ import java.util.List;
 public class Main {
     static HashMap<String, String> urls = new HashMap<>();
     static Scanner input = new Scanner(System.in);
-    static Set <String> set = new HashSet<>();
+    static Set<String> set = new HashSet<>();
 //    static String choose = input.nextLine();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
@@ -26,7 +26,7 @@ public class Main {
             set.add(String.valueOf(uuid));
             File file = new File(String.valueOf(uuid));
             file.mkdir();
-            File your_uuid = new File(file,"your_uuid.txt");
+            File your_uuid = new File(file, "your_uuid.txt");
             ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(your_uuid));
             output.writeObject(set); // to do перекодировать файл в utf-8
             output.close();
@@ -46,8 +46,8 @@ public class Main {
                     menu1();
                 } else {
                     System.out.print("Неверный uuid!\n" +
-                        "1.Ввеcти заново uuid\n" +
-                        "2.Выйти\n");
+                            "1.Ввеcти заново uuid\n" +
+                            "2.Выйти\n");
                     String variant = input.nextLine();
 
                     switch (variant) {
@@ -70,7 +70,8 @@ public class Main {
     }
 
 
-    public static void createShortLink() throws FileNotFoundException, IOException, URISyntaxException, ClassNotFoundException {
+    public static void createShortLink() throws FileNotFoundException, IOException, URISyntaxException,
+            ClassNotFoundException {
         Calendar calendar = Calendar.getInstance();
 
         System.out.print("Введите вашу ccылку: ");
@@ -90,29 +91,41 @@ public class Main {
         ObjectOutputStream urls_output = new ObjectOutputStream(new FileOutputStream(urls_file));
         urls_output.writeObject(urls); // записываем в файл
         urls_output.close();
+        menu1();
 
-        int day = calendar.get(Calendar.DAY_OF_MONTH);// устанавливаем дату создания короткой ссылки
-        System.out.print("Введите количество дней существования ссылки: ");// чтобы установить время ее жизни
-        int c = input.nextInt();
-        if (calendar.after(c)) {
-            InputStreamReader reading = new InputStreamReader(new FileInputStream(urls_file));
-            urls.remove(shortlink);
-            System.out.println("Превышено количество дней существования ссылки");
-            menu1();
-        }
+
+//        int day = calendar.get(Calendar.DAY_OF_MONTH);// устанавливаем дату создания короткой ссылки
+//        System.out.print("Введите количество дней существования ссылки: ");// чтобы установить время ее жизни
+//        int c = input.nextInt();
+//        if (calendar.after(c)) {
+//            InputStreamReader reading = new InputStreamReader(new FileInputStream(urls_file));
+//            urls.remove(shortlink);
+//            System.out.println("Превышено количество дней существования ссылки");
+//            menu1();
+//    }
     }
+
+
+
+
     public static void getShortlink() throws IOException, URISyntaxException, ClassNotFoundException {
         /*
         5. Переход по короткой ссылке.
         При вводе короткой ссылки в консоль пользователь должен автоматически перенаправляться на
         исходный ресурс в браузере:
          */
+        String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
         try {
-            FileReader in_urls = new FileReader("urls_file.txt");
-            in_urls.read();
+            BufferedReader in_urls = new BufferedReader(new FileReader(name + "\\urls_file.txt"));
+
+            HashMap a = new HashMap<>(in_urls.read());
             System.out.print("Введите вашу короткую ссылку: ");
-            String a = input.nextLine();
-            Desktop.getDesktop().browse(new URI(urls.get(a)));
+            String b = input.nextLine();
+            if (a.containsKey(b)) {
+                Desktop.getDesktop().browse(new URI(a.get(b).toString()));
+            } else {
+                System.out.println("Ничего нет");
+                }
         } catch (FileNotFoundException e) {
             System.out.println("Ссылки не существует " + e.getMessage());
             menu1();
