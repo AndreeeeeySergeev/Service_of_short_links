@@ -6,6 +6,8 @@ import java.util.*;
 import java.util.List;
 
 
+
+
 public class Main {
     static HashMap<String, String> urls = new HashMap<>();
     static Scanner input = new Scanner(System.in);
@@ -13,7 +15,8 @@ public class Main {
 //    static String choose = input.nextLine();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
-        menu();
+//        menu();
+        mycalendar();
     }
 
     public static void menu() throws IOException, ClassNotFoundException, URISyntaxException {
@@ -181,10 +184,26 @@ public class Main {
                 System.out.println("Внимание " + e.getMessage());
             }
             int count = 0;
-            while (count != good) {
+            if (count != good) {
                  getShortlink();
                  count++;
+            } else {
+                System.out.println("Истекло количество обращений к ссылке");
+                urls.clear();
+                menu1();
             }
+    }
+    
+    public static void mycalendar() {
+        Calendar calendar =  new GregorianCalendar();
+        System.out.println("Установите время существования ссылки: ");
+        int data = input.nextInt();
+        calendar.add(Calendar.MINUTE, data);
+        if (calendar.before(data)) {
+            System.out.println("Ссылка устарела!");
+        } else {
+            System.out.println("Всё хорошо!");
+        }
     }
 
 
