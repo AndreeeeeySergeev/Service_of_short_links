@@ -144,8 +144,8 @@ public class Main {
                 String key = parts[0].trim();
                 String value = parts[1].trim();
 
-                if (!key.equals("") && !value.equals(""))
-                    aNewHashMap.put(key, value);
+//                if (!key.equals("") && !value.equals(""))
+                aNewHashMap.put(key, value);
             }
             in_urls.close();
 //            File file = new File(name +"\\urls_file.txt");
@@ -154,6 +154,7 @@ public class Main {
 //            HashMap<String, Object> fileObj2 = (HashMap<String, Object>) s.readObject();
 //            s.close();
         Desktop.getDesktop().browse(new URI(aNewHashMap.get(b)));
+        Desktop.getDesktop().browse(new URI(urls.get(b)));
 
     } catch(
     FileNotFoundException e){
@@ -163,11 +164,11 @@ public class Main {
 
     }
 
-        public static void clicking() throws IOException {
-            Scanner onesmore = new Scanner(System.in);
+        public static void clicking() throws IOException, URISyntaxException, ClassNotFoundException {
+            String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
             System.out.print("Введите количество использования ссылки: ");
-            int good = Integer.valueOf(onesmore.nextLine());
-            try { File file = new File("links.txt");
+            int good = Integer.valueOf(input.nextLine());
+            try { File file = new File(name,"urls_file.txt");
             file.exists(); // проверяем существование файла
 //            BufferedReader read = new BufferedReader(file, good); // BufferedInputSTREAM
             InputStreamReader reading = new InputStreamReader(new FileInputStream(file));
@@ -178,6 +179,11 @@ public class Main {
             }
             } catch (FileNotFoundException e) {
                 System.out.println("Внимание " + e.getMessage());
+            }
+            int count = 0;
+            while (count != good) {
+                 getShortlink();
+                 count++;
             }
     }
 
