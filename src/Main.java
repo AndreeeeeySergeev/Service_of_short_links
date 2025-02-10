@@ -3,20 +3,17 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.List;
-
-
 
 
 public class Main {
-    static HashMap<String, String> urls = new HashMap<>();
+    static Map<String, String> urls = new HashMap<>();
     static Scanner input = new Scanner(System.in);
     static Set<String> set = new HashSet<>();
 //    static String choose = input.nextLine();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
-//        menu();
-        mycalendar();
+        menu();
+        //mycalendar();
     }
 
     public static void menu() throws IOException, ClassNotFoundException, URISyntaxException {
@@ -42,10 +39,13 @@ public class Main {
         } else {
             File file = new File(choose);
             if (file.exists()) {
+                set.add(choose);
                 ObjectInputStream ini = new ObjectInputStream(new FileInputStream(choose + "\\your_uuid.txt"));
-                Set<String> aNewSet = (HashSet<String>) ini.readObject(); // to do обернуть считывание с файла в try-catch
-                if (aNewSet.contains(choose)) { // оставлю дополнительную проверку
-                    System.out.println(aNewSet.contains(choose));
+                Set<String> aNewHashset = (HashSet<String>) ini.readObject();// to do обернуть считывание с файла в try-catch
+                System.out.println(aNewHashset.toString());
+                if (aNewHashset.contains(choose)) { // оставлю дополнительную проверку
+                    System.out.println(aNewHashset.contains(choose));
+                    System.out.println("раз");
                     menu1();
                 } else {
                     System.out.print("Неверный uuid!\n" +
@@ -90,6 +90,7 @@ public class Main {
             System.out.println("Ваша короткая ссылка: " + shortlink1);
         }
         String a = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
+        System.out.println(a);
         File urls_file = new File(a, "urls_file.txt");
 //        ObjectOutputStream urls_output = new ObjectOutputStream(new FileOutputStream(urls_file));
 //        urls_output.writeObject(urls); // записываем в файл
@@ -137,33 +138,41 @@ public class Main {
         String b = input.nextLine();
         HashMap<String, String> aNewHashMap = new HashMap<>();
         String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
+        System.out.println(name);
         try {
             BufferedReader in_urls = new BufferedReader(new FileReader(name + "\\urls_file.txt"));
             String line;
             line = in_urls.readLine();
-
-            while (line != null) {
+            System.out.println(line);
+//
+//            while (line != null) {
                 String[] parts = line.split("=");
                 String key = parts[0].trim();
                 String value = parts[1].trim();
-
-//                if (!key.equals("") && !value.equals(""))
+                System.out.println(Arrays.toString(parts));
+                System.out.println(key);
+                System.out.println(value);
                 aNewHashMap.put(key, value);
-            }
+//
+////                if (!key.equals("") && !value.equals(""))
+//
+//            }
             in_urls.close();
-//            File file = new File(name +"\\urls_file.txt");
-//            FileInputStream f = new FileInputStream(file);
-//            ObjectInputStream s = new ObjectInputStream(f);
-//            HashMap<String, Object> fileObj2 = (HashMap<String, Object>) s.readObject();
-//            s.close();
-        Desktop.getDesktop().browse(new URI(aNewHashMap.get(b)));
-        Desktop.getDesktop().browse(new URI(urls.get(b)));
-
+////            File file = new File(name +"\\urls_file.txt");
+////            FileInputStream f = new FileInputStream(file);
+////            ObjectInputStream s = new ObjectInputStream(f);
+////            HashMap<String, Object> fileObj2 = (HashMap<String, Object>) s.readObject();
+////            s.close();
+            Desktop.getDesktop().browse(new URI(aNewHashMap.get(b)));
+           // Desktop.getDesktop().browse(new URI(urls.get(b)));
+            menu1();
+//
     } catch(
     FileNotFoundException e){
         System.out.println("Ссылки не существует " + e.getMessage());
         menu1();
     }
+
 
     }
 
