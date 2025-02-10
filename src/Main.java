@@ -9,11 +9,11 @@ public class Main {
     static Map<String, String> urls = new HashMap<>();
     static Scanner input = new Scanner(System.in);
     static Set<String> set = new HashSet<>();
-//    static String choose = input.nextLine();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
-        menu();
+//        menu();
         //mycalendar();
+        clicking();
     }
 
     public static void menu() throws IOException, ClassNotFoundException, URISyntaxException {
@@ -113,6 +113,7 @@ public class Main {
             } catch (Exception e) {
             }
             menu1();
+        }
 
 
 //        int day = calendar.get(Calendar.DAY_OF_MONTH);// устанавливаем дату создания короткой ссылки
@@ -125,7 +126,7 @@ public class Main {
 //            menu1();
 //    }
         }
-    }
+
 
 
     public static void getShortlink() throws IOException, URISyntaxException, ClassNotFoundException {
@@ -143,20 +144,13 @@ public class Main {
             BufferedReader in_urls = new BufferedReader(new FileReader(name + "\\urls_file.txt"));
             String line;
             line = in_urls.readLine();
-            System.out.println(line);
-//
-//            while (line != null) {
-                String[] parts = line.split("=");
-                String key = parts[0].trim();
-                String value = parts[1].trim();
-                System.out.println(Arrays.toString(parts));
-                System.out.println(key);
-                System.out.println(value);
-                aNewHashMap.put(key, value);
-//
-////                if (!key.equals("") && !value.equals(""))
-//
-//            }
+
+
+            String[] parts = line.split("=");
+            String key = parts[0].trim();
+            String value = parts[1].trim();
+            aNewHashMap.put(key, value);
+
             in_urls.close();
 ////            File file = new File(name +"\\urls_file.txt");
 ////            FileInputStream f = new FileInputStream(file);
@@ -164,44 +158,52 @@ public class Main {
 ////            HashMap<String, Object> fileObj2 = (HashMap<String, Object>) s.readObject();
 ////            s.close();
             Desktop.getDesktop().browse(new URI(aNewHashMap.get(b)));
-           // Desktop.getDesktop().browse(new URI(urls.get(b)));
+            // Desktop.getDesktop().browse(new URI(urls.get(b)));
             menu1();
-//
-    } catch(
-    FileNotFoundException e){
+    } catch (FileNotFoundException e) {
         System.out.println("Ссылки не существует " + e.getMessage());
         menu1();
+        }
     }
 
+    public static void clicking_times() throws IOException, URISyntaxException, ClassNotFoundException {
+        System.out.print("Введите количество использования ссылки: ");
+        int good = Integer.valueOf(input.nextLine());
+        String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
+        File file = new File(name, "configuration_1.txt");
+        BufferedWriter out = new BufferedWriter(new FileWriter(file));
+        out.write(good);
+        out.close();
+        clicking();
+        menu1();
 
     }
 
         public static void clicking() throws IOException, URISyntaxException, ClassNotFoundException {
-            String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
-            System.out.print("Введите количество использования ссылки: ");
-            int good = Integer.valueOf(input.nextLine());
-            try { File file = new File(name,"urls_file.txt");
-            file.exists(); // проверяем существование файла
+            try {
+                String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
+                BufferedReader in = new BufferedReader(new FileReader(name + "\\configuration_1.txt"));
+                int a = Integer.parseInt(in.readLine());
+                System.out.println(a);
+
+
 //            BufferedReader read = new BufferedReader(file, good); // BufferedInputSTREAM
-            InputStreamReader reading = new InputStreamReader(new FileInputStream(file));
-            reading.read();
-            Integer c = Integer.valueOf(reading.read());
-            if ( c > good) {
-                file.delete();// если превышает количество обращений к файлу ссылки, то файл удаляется
-            }
+//            InputStreamReader reading = new InputStreamReader(new FileInputStream(file));
+
+                int count = 0;
+                if (count <= a) {
+                    getShortlink();
+                    count++;
+                } else {
+                    System.out.println("Истекло количество обращений к ссылке");
+                    urls.clear();
+                    menu1();
+                }
             } catch (FileNotFoundException e) {
-                System.out.println("Внимание " + e.getMessage());
+                    System.out.println("Установите количество переходов ссылки " + e.getMessage());
+                    menu1();
+                }
             }
-            int count = 0;
-            if (count != good) {
-                 getShortlink();
-                 count++;
-            } else {
-                System.out.println("Истекло количество обращений к ссылке");
-                urls.clear();
-                menu1();
-            }
-    }
     
     public static void mycalendar() {
         Calendar calendar =  new GregorianCalendar();
@@ -222,7 +224,7 @@ public class Main {
             System.out.print("Выберите нужный вам пункт меню:\n " +
                     "1. Cоздать короткую ссылку\n " +
                     "2. Получить ссылку для перехода\n " +
-                    "3. Количество раз для перехода\n " +
+                    "3. Установить количество раз для перехода\n " +
                     "4. Выйти\n");
             String variant = input.nextLine();
 
@@ -234,7 +236,7 @@ public class Main {
                     getShortlink();
                     break;
                 case "3":
-                    clicking();
+                    clicking_times();
                     break;
                 case "4":
                     System.out.println("До новых встреч!");
