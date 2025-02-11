@@ -3,6 +3,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import getCallerClassAndMethodName;
 
 
 public class Main {
@@ -13,8 +14,6 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
         menu();
-        //mycalendar();
-//        clicking();
     }
 
     public static void menu() throws IOException, ClassNotFoundException, URISyntaxException {
@@ -146,7 +145,6 @@ public class Main {
             String line;
             line = in_urls.readLine();
 
-
             String[] parts = line.split("=");
             String key = parts[0].trim();
             String value = parts[1].trim();
@@ -162,7 +160,9 @@ public class Main {
             // Desktop.getDesktop().browse(new URI(urls.get(b)));
             count++;
             System.out.println(count);
+            if (getCallerClassAndMethodName(clicking_times())) {
             clicking();
+            }
     } catch (FileNotFoundException e) {
         System.out.println("Ссылки не существует " + e.getMessage());
         menu1();
@@ -188,31 +188,16 @@ public class Main {
             try {
                 String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
                 in = new InputStreamReader(new FileInputStream(name + "\\configuration_1.txt"));
-//                ObjectInput in = new ObjectInput(new Inpu(name + "\\configuration_1.txt"));
                 int a = Integer.parseInt(String.valueOf(in.read()));
-                System.out.println(a);
-//                int b = Integer.parseInt(getShortlink());
 
-//                in.read();
-//                System.out.println(a);
-
-
-//            BufferedReader read = new BufferedReader(file, good); // BufferedInputSTREAM
-//            InputStreamReader reading = new InputStreamReader(new FileInputStream(file));
-
-//                int count = 0;
-                if (count <= a) {
+                if (count < a) {
                     System.out.println(count);
                     menu1();
-                    //getShortlink();
                 } else {
-                    System.out.println("Истекло количество обращений к ссылке");
-                    urls.clear();
-                    menu1();
+                    System.out.println("Истекло количество обращений к ссылке\n" +
+                            "Задайте новое значение");
+                    clicking_times();
                 }
-
-
-                //}
             } catch (FileNotFoundException e) {
                 System.out.println("Установите количество переходов ссылки " + e.getMessage());
                 menu1();
