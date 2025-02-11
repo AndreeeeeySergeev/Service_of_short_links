@@ -9,11 +9,12 @@ public class Main {
     static Map<String, String> urls = new HashMap<>();
     static Scanner input = new Scanner(System.in);
     static Set<String> set = new HashSet<>();
+    static int count = 0;
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
-//        menu();
+        menu();
         //mycalendar();
-        clicking();
+//        clicking();
     }
 
     public static void menu() throws IOException, ClassNotFoundException, URISyntaxException {
@@ -129,7 +130,7 @@ public class Main {
 
 
 
-    public static void getShortlink() throws IOException, URISyntaxException, ClassNotFoundException {
+    public static String getShortlink() throws IOException, URISyntaxException, ClassNotFoundException {
         /*
         5. Переход по короткой ссылке.
         При вводе короткой ссылки в консоль пользователь должен автоматически перенаправляться на
@@ -164,6 +165,8 @@ public class Main {
         System.out.println("Ссылки не существует " + e.getMessage());
         menu1();
         }
+        count++;
+        return getShortlink();
     }
 
     public static void clicking_times() throws IOException, URISyntaxException, ClassNotFoundException {
@@ -180,30 +183,40 @@ public class Main {
     }
 
         public static void clicking() throws IOException, URISyntaxException, ClassNotFoundException {
+            InputStreamReader in = null;
             try {
                 String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
-                BufferedReader in = new BufferedReader(new FileReader(name + "\\configuration_1.txt"));
-                int a = Integer.parseInt(in.readLine());
+                in = new InputStreamReader(new FileInputStream(name + "\\configuration_1.txt"));
+//                ObjectInput in = new ObjectInput(new Inpu(name + "\\configuration_1.txt"));
+                int a = Integer.parseInt(String.valueOf(in.read()));
                 System.out.println(a);
+                int b = Integer.parseInt(getShortlink());
+
+//                in.read();
+//                System.out.println(a);
 
 
 //            BufferedReader read = new BufferedReader(file, good); // BufferedInputSTREAM
 //            InputStreamReader reading = new InputStreamReader(new FileInputStream(file));
 
-                int count = 0;
+//                int count = 0;
                 if (count <= a) {
                     getShortlink();
-                    count++;
+                    menu1();
                 } else {
                     System.out.println("Истекло количество обращений к ссылке");
                     urls.clear();
                     menu1();
                 }
+
+
+                //}
             } catch (FileNotFoundException e) {
-                    System.out.println("Установите количество переходов ссылки " + e.getMessage());
-                    menu1();
-                }
+                System.out.println("Установите количество переходов ссылки " + e.getMessage());
+                menu1();
             }
+            in.close();
+        }
     
     public static void mycalendar() {
         Calendar calendar =  new GregorianCalendar();
