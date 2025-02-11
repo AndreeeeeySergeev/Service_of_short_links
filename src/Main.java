@@ -160,12 +160,13 @@ public class Main {
 ////            s.close();
             Desktop.getDesktop().browse(new URI(aNewHashMap.get(b)));
             // Desktop.getDesktop().browse(new URI(urls.get(b)));
-            menu1();
+            count++;
+            System.out.println(count);
+            clicking();
     } catch (FileNotFoundException e) {
         System.out.println("Ссылки не существует " + e.getMessage());
         menu1();
         }
-        count++;
         return getShortlink();
     }
 
@@ -190,7 +191,7 @@ public class Main {
 //                ObjectInput in = new ObjectInput(new Inpu(name + "\\configuration_1.txt"));
                 int a = Integer.parseInt(String.valueOf(in.read()));
                 System.out.println(a);
-                int b = Integer.parseInt(getShortlink());
+//                int b = Integer.parseInt(getShortlink());
 
 //                in.read();
 //                System.out.println(a);
@@ -201,8 +202,9 @@ public class Main {
 
 //                int count = 0;
                 if (count <= a) {
-                    getShortlink();
+                    System.out.println(count);
                     menu1();
+                    //getShortlink();
                 } else {
                     System.out.println("Истекло количество обращений к ссылке");
                     urls.clear();
