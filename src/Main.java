@@ -33,7 +33,6 @@ public class Main {
             output.writeObject(set); // to do перекодировать файл в utf-8
             output.close();
             System.out.println("Ваш uuid: " + uuid);
-            System.out.println(set.contains(String.valueOf(uuid))); // проверка для себя
             menu();
         } else if (choose.contains("выход")) {
             System.out.println("До свидания!");
@@ -89,26 +88,50 @@ public class Main {
             System.out.println("Ваша короткая ссылка: " + shortlink1);
         }
         String a = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
-        File urls_file = new File(a, "urls_file.txt");
+        final String git = (a + "\\urls_file.txt");
+        BufferedWriter buffer_write = null;
+        if (!(git.isEmpty())) {
+
 //        ObjectOutputStream urls_output = new ObjectOutputStream(new FileOutputStream(urls_file));
 //        urls_output.writeObject(urls); // записываем в файл
 //        urls_output.close();
-        BufferedWriter buffer_write = null;
-        try {
-            buffer_write = new BufferedWriter(new FileWriter(urls_file));
-            for (Map.Entry<String, String> entry : urls.entrySet()) {
-                buffer_write.write(entry.getKey() + "=" + entry.getValue());
-                buffer_write.newLine();
-            }
-            buffer_write.flush();
-
-        } catch (IOException e) {
-            e.getMessage();
-        } finally {
 
             try {
-                buffer_write.close();
-            } catch (Exception e) {
+                buffer_write = new BufferedWriter(new FileWriter(git)); //urls_file
+                for (Map.Entry<String, String> entry : urls.entrySet()) {
+                    buffer_write.write(entry.getKey() + "=" + entry.getValue());
+                    buffer_write.newLine();
+                }
+                buffer_write.flush();
+
+            } catch (IOException e) {
+                e.getMessage();
+            } finally {
+
+                try {
+                    buffer_write.close();
+                } catch (Exception e) {
+                }
+                menu1();
+            }
+        } else {
+            File urls_file = new File(git);
+            try {
+                buffer_write = new BufferedWriter(new FileWriter(urls_file)); //urls_file
+                for (Map.Entry<String, String> entry : urls.entrySet()) {
+                    buffer_write.write(entry.getKey() + "=" + entry.getValue());
+                    buffer_write.newLine();
+                }
+                buffer_write.flush();
+
+            } catch (IOException e) {
+                e.getMessage();
+            } finally {
+
+                try {
+                    buffer_write.close();
+                } catch (Exception e) {
+                }
             }
             menu1();
         }
@@ -127,12 +150,13 @@ public class Main {
         try {
             BufferedReader in_urls = new BufferedReader(new FileReader(name + "\\urls_file.txt"));
             String line;
-            line = in_urls.readLine();
 
-            String[] parts = line.split("=");
-            String key = parts[0].trim();
-            String value = parts[1].trim();
-            aNewHashMap.put(key, value);
+            while ((line = in_urls.readLine()) != null) {
+                String[] parts = line.split("=");
+                String key = parts[0].trim();
+                String value = parts[1].trim();
+                aNewHashMap.put(key, value);
+            }
 
             in_urls.close();
 ////            File file = new File(name +"\\urls_file.txt");
@@ -173,7 +197,7 @@ public class Main {
                 int a = Integer.valueOf(String.valueOf(in.read()));
 
                 if (count < a) {
-                    System.out.println(count);
+                    System.out.println("Установлен лимит переходов: " + a);
                     menu1();
                 } else {
                     System.out.println("Истекло количество обращений к ссылке\n" +
