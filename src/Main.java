@@ -11,10 +11,11 @@ public class Main {
     static Scanner input = new Scanner(System.in);
     static Set<String> set = new HashSet<>();
     static int count = 0;
+    static Calendar calendar1 = Calendar.getInstance();
+    static Calendar calendar2 = Calendar.getInstance();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
         menu();
-        //mycalendar();
     }
 
     public static void menu() throws IOException, ClassNotFoundException, URISyntaxException {
@@ -36,25 +37,23 @@ public class Main {
             menu();
         } else if (choose.contains("выход")) {
             System.out.println("До свидания!");
-            System.exit(1);
+            System.exit(0);
         } else {
             File file = new File(choose);
             if (file.exists()) {
                 set.add(choose);
                 ObjectInputStream ini = new ObjectInputStream(new FileInputStream(choose + "\\your_uuid.txt"));
                 Set<String> aNewHashset = (HashSet<String>) ini.readObject();// to do обернуть считывание с файла в try-catch
-                System.out.println(aNewHashset.toString());
                 if (aNewHashset.contains(choose)) { // оставлю дополнительную проверку
-                    System.out.println(aNewHashset.contains(choose));
-                    System.out.println("раз");
+                    read_calendar(); // проверка протухших ссылок, если установлена, иначе не находит файл
                     menu1();
                 } else {
                     System.out.print("Неверный uuid!\n" +
                             "1.Ввеcти заново uuid\n" +
                             "2.Выйти\n");
-                    String variant = input.nextLine();
+                    String variant1 = input.nextLine();
 
-                    switch (variant) {
+                    switch (variant1) {
                         case "1":
                             menu();
                             break;
@@ -63,7 +62,7 @@ public class Main {
                             System.exit(1);
                             break;
                         default:
-                            throw new IllegalStateException("Unexpected value: " + variant);
+                            throw new IllegalStateException("Unexpected value: " + variant1);
                     }
                 }
             } else {
@@ -78,7 +77,7 @@ public class Main {
             ClassNotFoundException {
 
         System.out.print("Введите вашу ccылку: ");
-        String link = input.nextLine();
+        String link = input.next();
         String shortlink = link + UUID.randomUUID().toString().substring(0, 8);// создаем ссылку
 
         if (!urls.containsKey(shortlink)) { //проверяем наличие ссылки
@@ -90,7 +89,6 @@ public class Main {
             System.out.println("Ваша короткая ссылка: " + shortlink1);
         }
         String a = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
-        System.out.println(a);
         File urls_file = new File(a, "urls_file.txt");
 //        ObjectOutputStream urls_output = new ObjectOutputStream(new FileOutputStream(urls_file));
 //        urls_output.writeObject(urls); // записываем в файл
@@ -116,20 +114,6 @@ public class Main {
         }
     }
 
-
-//        int day = calendar.get(Calendar.DAY_OF_MONTH);// устанавливаем дату создания короткой ссылки
-//        System.out.print("Введите количество дней существования ссылки: ");// чтобы установить время ее жизни
-//        int c = input.nextInt();
-//        if (calendar.after(c)) {
-//            InputStreamReader reading = new InputStreamReader(new FileInputStream(urls_file));
-//            urls.remove(shortlink);
-//            System.out.println("Превышено количество дней существования ссылки");
-//            menu1();
-//    }
-
-
-
-
     public static String getShortlink() throws IOException, URISyntaxException, ClassNotFoundException {
         /*
         5. Переход по короткой ссылке.
@@ -137,10 +121,9 @@ public class Main {
         исходный ресурс в браузере:
          */
         System.out.print("Введите вашу короткую ссылку: ");
-        String b = input.nextLine();
+        String b = input.next();
         HashMap<String, String> aNewHashMap = new HashMap<>();
         String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
-        System.out.println(name);
         try {
             BufferedReader in_urls = new BufferedReader(new FileReader(name + "\\urls_file.txt"));
             String line;
@@ -158,9 +141,8 @@ public class Main {
 ////            HashMap<String, Object> fileObj2 = (HashMap<String, Object>) s.readObject();
 ////            s.close();
             Desktop.getDesktop().browse(new URI(aNewHashMap.get(b)));
-            // Desktop.getDesktop().browse(new URI(urls.get(b)));
             count++;
-            System.out.println(count);
+            System.out.println("Текущее число использования ссылки: " + count); // показываем пользователю, чтобы ориентировался
             clicking();
     } catch (FileNotFoundException e) {
         System.out.println("Ссылки не существует " + e.getMessage());
@@ -170,8 +152,9 @@ public class Main {
     }
 
     public static void clicking_times() throws IOException, URISyntaxException, ClassNotFoundException {
+        //установление количество переходов
         System.out.print("Введите количество использования ссылки: ");
-        int good = Integer.valueOf(input.nextLine());
+        int good = Integer.valueOf(input.next());
         String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
         File file = new File(name, "configuration_1.txt");
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
@@ -179,10 +162,10 @@ public class Main {
         out.close();
         clicking();
         menu1();
-
     }
 
         public static void clicking() throws IOException, URISyntaxException, ClassNotFoundException {
+            // проверка количества переходов
             InputStreamReader in = null;
             try {
                 String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
@@ -205,8 +188,7 @@ public class Main {
         }
     
     public static void mycalendar() throws IOException, URISyntaxException, ClassNotFoundException {
-        Calendar calendar1 = Calendar.getInstance();
-        Calendar calendar2 = Calendar.getInstance();
+        // установка ссылки
         System.out.print("Установите день месяца существования ссылки: ");
         int data = input.nextInt();
         calendar1.set(Calendar.DAY_OF_MONTH, data);
@@ -220,15 +202,13 @@ public class Main {
             BufferedWriter out = new BufferedWriter(new FileWriter(file));
             out.write(data);
             out.close();
+            System.out.println("Дата установлена");
             read_calendar();
-            //System.out.println(calendar);
         }
     }
 
     public static void read_calendar() throws IOException, ClassNotFoundException, URISyntaxException {
-        Calendar calendar1 =  Calendar.getInstance();
-        Calendar calendar2 =  Calendar.getInstance();
-
+        // проверка "протухших" ссылок
         try {
             String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
             BufferedReader in_data = new BufferedReader(new FileReader(name + "\\configuration_2.txt"));
@@ -240,7 +220,7 @@ public class Main {
                 in_data.close();
                 menu1();
             } else {
-                System.out.println("Всё хорошо!");
+                System.out.println("Ссылка актуальна");
                 in_data.close();
                 menu1();
             }
@@ -259,7 +239,8 @@ public class Main {
                     "3. Установить лимит использования ссылки\n " +
                     "4. Установить дату существования ссылки\n " +
                     "5. Выйти\n");
-            String variant = input.nextLine();
+
+            String variant = input.next();
 
             switch (variant) {
                 case "1":
@@ -273,10 +254,9 @@ public class Main {
                     break;
                 case "4":
                     mycalendar();
-                    break;
                 case "5":
                     System.out.println("До новых встреч!");
-                    System.exit(1);
+                    System.exit(0);
                     work = false;
                     break;
                 default:
