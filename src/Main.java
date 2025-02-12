@@ -76,7 +76,6 @@ public class Main {
 
     public static void createShortLink() throws FileNotFoundException, IOException, URISyntaxException,
             ClassNotFoundException {
-        Calendar calendar = Calendar.getInstance();
 
         System.out.print("Введите вашу ccылку: ");
         String link = input.nextLine();
@@ -188,7 +187,7 @@ public class Main {
             try {
                 String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
                 in = new InputStreamReader(new FileInputStream(name + "\\configuration_1.txt"));
-                int a = Integer.parseInt(String.valueOf(in.read()));
+                int a = Integer.valueOf(String.valueOf(in.read()));
 
                 if (count < a) {
                     System.out.println(count);
@@ -211,7 +210,7 @@ public class Main {
         System.out.print("Установите день месяца существования ссылки: ");
         int data = input.nextInt();
         calendar1.set(Calendar.DAY_OF_MONTH, data);
-        if (calendar2.before(calendar1)) {
+        if (calendar1.before(calendar2)) {
             System.out.println("Вы устанавливаете дату раньше, текущей\n " +
                     "Установите другую дату");
             mycalendar();
@@ -234,13 +233,15 @@ public class Main {
             String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
             BufferedReader in_data = new BufferedReader(new FileReader(name + "\\configuration_2.txt"));
             int line;
-            line = Integer.parseInt(in_data.readLine());
+            line = Integer.valueOf(String.valueOf(in_data.read()));
             calendar1.set(Calendar.DAY_OF_MONTH, line);
             if (calendar2.after(calendar1)) {
                 System.out.println("Ссылка устарела!");
+                in_data.close();
                 menu1();
             } else {
                 System.out.println("Всё хорошо!");
+                in_data.close();
                 menu1();
             }
         } catch (FileNotFoundException e) {
