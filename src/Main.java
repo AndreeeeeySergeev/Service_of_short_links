@@ -3,7 +3,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import getCallerClassAndMethodName;
+
 
 
 public class Main {
@@ -14,6 +14,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, URISyntaxException {
         menu();
+        //mycalendar();
     }
 
     public static void menu() throws IOException, ClassNotFoundException, URISyntaxException {
@@ -114,6 +115,7 @@ public class Main {
             }
             menu1();
         }
+    }
 
 
 //        int day = calendar.get(Calendar.DAY_OF_MONTH);// устанавливаем дату создания короткой ссылки
@@ -125,7 +127,7 @@ public class Main {
 //            System.out.println("Превышено количество дней существования ссылки");
 //            menu1();
 //    }
-        }
+
 
 
 
@@ -160,9 +162,7 @@ public class Main {
             // Desktop.getDesktop().browse(new URI(urls.get(b)));
             count++;
             System.out.println(count);
-            if (getCallerClassAndMethodName(clicking_times())) {
             clicking();
-            }
     } catch (FileNotFoundException e) {
         System.out.println("Ссылки не существует " + e.getMessage());
         menu1();
@@ -205,15 +205,46 @@ public class Main {
             in.close();
         }
     
-    public static void mycalendar() {
-        Calendar calendar =  new GregorianCalendar();
-        System.out.println("Установите время существования ссылки: ");
+    public static void mycalendar() throws IOException, URISyntaxException, ClassNotFoundException {
+        Calendar calendar1 = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+        System.out.print("Установите день месяца существования ссылки: ");
         int data = input.nextInt();
-        calendar.add(Calendar.MINUTE, data);
-        if (calendar.before(data)) {
-            System.out.println("Ссылка устарела!");
+        calendar1.set(Calendar.DAY_OF_MONTH, data);
+        if (calendar2.before(calendar1)) {
+            System.out.println("Вы устанавливаете дату раньше, текущей\n " +
+                    "Установите другую дату");
+            mycalendar();
         } else {
-            System.out.println("Всё хорошо!");
+            String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
+            File file = new File(name, "configuration_2.txt");
+            BufferedWriter out = new BufferedWriter(new FileWriter(file));
+            out.write(data);
+            out.close();
+            read_calendar();
+            //System.out.println(calendar);
+        }
+    }
+
+    public static void read_calendar() throws IOException, ClassNotFoundException, URISyntaxException {
+        Calendar calendar1 =  Calendar.getInstance();
+        Calendar calendar2 =  Calendar.getInstance();
+
+        try {
+            String name = Arrays.toString(set.toArray()).replace("[", "").replace("]", "");
+            BufferedReader in_data = new BufferedReader(new FileReader(name + "\\configuration_2.txt"));
+            int line;
+            line = Integer.parseInt(in_data.readLine());
+            calendar1.set(Calendar.DAY_OF_MONTH, line);
+            if (calendar2.after(calendar1)) {
+                System.out.println("Ссылка устарела!");
+                menu1();
+            } else {
+                System.out.println("Всё хорошо!");
+                menu1();
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -224,8 +255,9 @@ public class Main {
             System.out.print("Выберите нужный вам пункт меню:\n " +
                     "1. Cоздать короткую ссылку\n " +
                     "2. Получить ссылку для перехода\n " +
-                    "3. Установить количество раз для перехода\n " +
-                    "4. Выйти\n");
+                    "3. Установить лимит использования ссылки\n " +
+                    "4. Установить дату существования ссылки\n " +
+                    "5. Выйти\n");
             String variant = input.nextLine();
 
             switch (variant) {
@@ -239,6 +271,9 @@ public class Main {
                     clicking_times();
                     break;
                 case "4":
+                    mycalendar();
+                    break;
+                case "5":
                     System.out.println("До новых встреч!");
                     System.exit(1);
                     work = false;
